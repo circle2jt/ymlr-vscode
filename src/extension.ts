@@ -5,7 +5,7 @@ import { tmpdir } from 'os';
 import { basename, join } from 'path';
 import * as vscode from 'vscode';
 
-let nodeBin = join(require.resolve('ymlr'), '..', '..', 'bin/cli.js')
+const NodeBin = join(require.resolve('ymlr'), '..', '..', 'bin/cli.js')
 const term = new Map<string, vscode.Terminal>()
 let debugLog: vscode.OutputChannel
 let playStatusBar: vscode.StatusBarItem;
@@ -61,6 +61,9 @@ vscode.window.onDidCloseTerminal(e => {
 
 async function executeCmd(scenarioFile: string[]) {
   try {
+    const wsPath = vscode.workspace.workspaceFolders?.[0]?.uri.path
+    const localYmlr = wsPath && join(wsPath, 'node_modules/ymlr/bin/cli.js')
+    const nodeBin = (localYmlr && existsSync(localYmlr)) ? localYmlr : NodeBin
     const name = basename(scenarioFile[0])
     const terName = 'ymlr:' + name
     const cmd = [nodeBin]
