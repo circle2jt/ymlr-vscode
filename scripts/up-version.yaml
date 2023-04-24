@@ -1,0 +1,17 @@
+title: Prerelease the version
+vars:
+  preid: alpha
+  versionName: prerelease
+runs:
+  - name: ${ $vars.preid }/${ $vars.versionName }
+    scene:
+      path: https://raw.githubusercontent.com/circle2jt/ymlr/feature/separate-element-proxy/shares/version.yaml
+      vars:
+        force: true
+        preid: ${ $vars.preid }
+        versionName: ${ $vars.versionName }
+        changeDir: ~~/changelogs
+        changeFile: ~~/CHANGELOG.md
+        commitFiles:
+          - ~~/README.md
+          - ~~/package.json
