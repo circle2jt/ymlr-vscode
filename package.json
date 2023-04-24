@@ -31,6 +31,7 @@
       }
     ]
   },
+  "icon": "icon.png",
   "author": "circle2jt@gmail.com",
   "publisher": "circle2jt",
   "scripts": {
