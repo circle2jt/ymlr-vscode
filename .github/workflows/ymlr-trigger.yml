@@ -1,11 +1,8 @@
 name: publish
 
 on:
-  push:
-    branches:
-      - "main"
-    paths:
-      - CHANGELOG.md
+  repository_dispatch:
+    types: [new_ymlr]
 
 jobs:
   publish:
@@ -19,7 +16,13 @@ jobs:
           node-version: current
           cache: npm
       - run: npm ci
+      - run: npm install ymlr@${{ github.event.client_payload.version }} --save
+      - name: Update version
+        run: npm version --no-commit-hooks --no-git-tag-version ${{ github.event.client_payload.version }}
       - name: Build code
         run: npm run ci:build
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: v${{ github.event.client_payload.version }}
       - name: Publish
         run: node_modules/.bin/vsce publish -p ${{ secrets.VSCODE_TOKEN }}
