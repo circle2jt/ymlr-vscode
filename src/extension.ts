@@ -2,11 +2,12 @@
 // Import the module and reference it with the alias vscode in your code below
 import { existsSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
-import { basename, join } from 'path';
+import { basename, dirname, join } from 'path';
 import * as vscode from 'vscode';
 
 const NodeBin = join(require.resolve('ymlr'), '..', '..', 'bin/cli.js')
 const term = new Map<string, vscode.Terminal>()
+const termNames = new Map<string, string>()
 let debugLog: vscode.OutputChannel
 let playStatusBar: vscode.StatusBarItem;
 let lastScenario: string[] = []
@@ -54,23 +55,41 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() { }
 
 vscode.window.onDidCloseTerminal(e => {
-  if (e.name.startsWith('ymlr:')) {
-    term.delete(e.name)
+  if (e.name.startsWith('🚀 ')) {
+    const name = e.name.replace('🚀 ', '')
+    term.delete(name)
+    termNames.forEach((vl, key) => {
+      if (vl === name) {
+        termNames.delete(key)
+      }
+    })
   }
 })
+
+function getUniqueName(dir: string, fileName = '') {
+  const name = basename(dir) + fileName
+  if (term.has(name)) {
+    const newName: string = getUniqueName(dirname(dir), `/${name}`)
+    return newName
+  }
+  return name
+}
 
 async function executeCmd(scenarioFile: string[]) {
   try {
     const wsPath = vscode.workspace.workspaceFolders?.[0]?.uri.path
     const localYmlr = wsPath && join(wsPath, 'node_modules/ymlr/bin/cli.js')
     const nodeBin = (localYmlr && existsSync(localYmlr)) ? localYmlr : NodeBin
-    const name = basename(scenarioFile[0])
-    const terName = 'ymlr:' + name
+    let terName = termNames.get(scenarioFile[0])
+    if (!terName) {
+      terName = getUniqueName(scenarioFile[0])
+      termNames.set(scenarioFile[0], terName)
+    }
     const cmd = [nodeBin]
     let termObj = term.get(scenarioFile[0])
     if (!termObj) {
-      termObj = vscode.window.createTerminal(terName)
-      term.set(scenarioFile[0], termObj)
+      termObj = vscode.window.createTerminal('🚀 ' + terName)
+      term.set(terName, termObj)
     }
     termObj.show(true)
     if (!/\.ya?ml$/i.test(scenarioFile[0]) && !scenarioFile[1]) {
@@ -97,7 +116,7 @@ function updatePlayStatusBar() {
   if (lastScenario?.length) {
     playStatusBar.show()
     playStatusBar.text = `🚀 ${basename(lastScenario[0])}`
-    playStatusBar.tooltip = `ymlr: ${lastScenario[0]}`
+    playStatusBar.tooltip = `ymlr ${lastScenario[0]}`
   } else {
     playStatusBar.hide()
   }
