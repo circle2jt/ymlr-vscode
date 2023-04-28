@@ -67,10 +67,10 @@ async function executeCmd(scenarioFile: string[]) {
     const name = basename(scenarioFile[0])
     const terName = 'ymlr:' + name
     const cmd = [nodeBin]
-    let termObj = term.get(terName)
+    let termObj = term.get(scenarioFile[0])
     if (!termObj) {
       termObj = vscode.window.createTerminal(terName)
-      term.set(terName, termObj)
+      term.set(scenarioFile[0], termObj)
     }
     termObj.show(true)
     if (!/\.ya?ml$/i.test(scenarioFile[0]) && !scenarioFile[1]) {
