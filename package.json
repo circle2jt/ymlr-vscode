@@ -2,7 +2,7 @@
   "name": "ymlr-vscode",
   "displayName": "ymlr-vscode",
   "description": "A vscode extension for ymlr platform",
-  "version": "1.1.10",
+  "version": "1.1.11-alpha.4",
   "engines": {
     "vscode": "^1.77.0"
   },
@@ -59,6 +59,6 @@
     "vsce": "^2.15.0"
   },
   "dependencies": {
-    "ymlr": "^1.1.10"
+    "ymlr": "^1.1.11-alpha.4"
   }
 }
