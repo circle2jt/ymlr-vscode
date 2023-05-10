@@ -80,21 +80,26 @@ async function executeCmd(scenarioFile: string[]) {
     const wsPath = vscode.workspace.workspaceFolders?.[0]?.uri.path
     const localYmlr = wsPath && join(wsPath, 'node_modules/ymlr/bin/cli.js')
     const nodeBin = (localYmlr && existsSync(localYmlr)) ? localYmlr : NodeBin
-    let terName = termNames.get(scenarioFile[0])
-    if (!terName) {
-      terName = getUniqueName(scenarioFile[0])
-      termNames.set(scenarioFile[0], terName)
-    }
-    const cmd = [nodeBin]
-    let termObj = term.get(scenarioFile[0])
-    if (!termObj) {
-      termObj = vscode.window.createTerminal('🚀 ' + terName)
-      term.set(terName, termObj)
+    let termObj: vscode.Terminal | undefined
+    if (vscode.window.activeTerminal?.state.isInteractedWith) {
+      termObj = vscode.window.activeTerminal
+    } else {
+      let terName = termNames.get(scenarioFile[0])
+      if (!terName) {
+        terName = getUniqueName(scenarioFile[0])
+        termNames.set(scenarioFile[0], terName)
+      }
+      termObj = term.get(terName)
+      if (!termObj) {
+        termObj = vscode.window.createTerminal('🚀 ' + terName)
+        term.set(terName, termObj)
+      }
     }
     termObj.show(true)
     if (!/\.ya?ml$/i.test(scenarioFile[0]) && !scenarioFile[1]) {
       scenarioFile[1] = await getInput('Enter password to decrypt file', '')
     }
+    const cmd = [nodeBin]
     cmd.push(scenarioFile[0], scenarioFile[1])
     updateLastScenario(scenarioFile)
     termObj.sendText(cmd.join(' '))
