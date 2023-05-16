@@ -38,6 +38,8 @@
     "v:next": "node node_modules/ymlr -e preid=alpha -e VERSIONNAME=prerelease -- ./scripts/up-version.yaml",
     "v:patch": "node node_modules/ymlr -e preid=latest -e VERSIONNAME=patch -- ./scripts/up-version.yaml",
     "ci:build": "npm run compile",
+    "ci:tag": "node node_modules/ymlr ./scripts/create-tag.yaml",
+    "ci:release": "node node_modules/ymlr ./scripts/create-release.yaml",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
@@ -60,5 +62,9 @@
   },
   "dependencies": {
     "ymlr": "^1.1.12-alpha.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "<PUBLISH.TAG>"
   }
 }

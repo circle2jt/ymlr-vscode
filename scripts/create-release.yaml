@@ -1,0 +1,20 @@
+title: Create a new release on github
+vars:
+  githubToken: ""
+  lastCommitSHA: ""
+runs:
+  - scene:
+      title: Create a new release
+      path: https://raw.githubusercontent.com/circle2jt/ymlr/dev/shares/github.release.yaml
+      vars:
+        token: ${ $vars.githubToken }
+        lastCommitSHA: ${ $vars.lastCommitSHA }
+        owner: circle2jt
+        repo: ymlr
+        tag: "%s"
+        packageJson: ~~/package.json
+        validTagRegex: "^\\d+\\.\\d+\\.\\d+$"
+        name: "Release %s"
+        draft: false
+        prerelease: false
+        makeLatest: "true"
