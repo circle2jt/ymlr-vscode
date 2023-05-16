@@ -23,3 +23,14 @@ jobs:
         run: npm run ci:build
       - name: Publish
         run: node_modules/.bin/vsce publish -p ${{ secrets.VSCODE_TOKEN }}
+
+      - name: Create a new tag
+        run: yarn ci:tag
+        env:
+          GITHUBTOKEN: ${{ secrets.GIT_TOKEN }}
+          LASTCOMMITSHA: ${{ github.SHA }}
+
+      - name: Create a new release
+        run: yarn ci:release
+        env:
+          GITHUBTOKEN: ${{ secrets.GIT_TOKEN }}

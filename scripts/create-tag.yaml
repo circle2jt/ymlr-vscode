@@ -1,0 +1,16 @@
+title: Create a new tag on github
+vars:
+  githubToken: ""
+  lastCommitSHA: ""
+runs:
+  - scene:
+      title: Create a new tag
+      path: https://raw.githubusercontent.com/circle2jt/ymlr/dev/shares/github.tag.yaml
+      vars:
+        token: ${ $vars.githubToken }
+        lastCommitSHA: ${ $vars.lastCommitSHA }
+        owner: circle2jt
+        repo: ymlr-vscode
+        tag: "%s"
+        packageJson: ~~/package.json
+        validTagRegex: ""
